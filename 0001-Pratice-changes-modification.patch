@@ -1,0 +1,327 @@
+From 573b2535ac069e959d6bff516195d3a6dfc22e05 Mon Sep 17 00:00:00 2001
+From: rj <chou.ravin177@gmail.com>
+Date: Mon, 10 Oct 2022 10:48:09 +0530
+Subject: [PATCH] Pratice changes modification
+
+---
+ .gitignore                                    |  2 +
+ .../15.19StringView/CustomStringView.cpp      | 54 +++++++++++++++++++
+ .../15.19StringView/main.cpp                  |  8 ++-
+ .../CppProperties.json                        | 21 ++++++++
+ 25.Concepts/C++ 20 Template Project/main.cpp  | 15 ++++--
+ 25.Concepts/Concepts/Concepts.cpp             | 41 ++++++++++++++
+ 26.Classes/26.12Struct/main.cpp               |  3 ++
+ 26.Classes/26.2YourFirstClass/main.cpp        | 32 ++++++++++-
+ .../27.2ConstObjects/main.cpp                 | 10 +++-
+ 9 files changed, 177 insertions(+), 9 deletions(-)
+ create mode 100644 15.CharacterManipulationAndStrings/15.19StringView/CustomStringView.cpp
+ create mode 100644 25.Concepts/C++ 20 Template Project/CppProperties.json
+ create mode 100644 25.Concepts/Concepts/Concepts.cpp
+
+diff --git a/.gitignore b/.gitignore
+index 2c9adf2..ebb88e2 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -5,3 +5,5 @@
+ *.pdb
+ *.obj
+ *.ilk
++*.sln
++*.vcxproj*
+\ No newline at end of file
+diff --git a/15.CharacterManipulationAndStrings/15.19StringView/CustomStringView.cpp b/15.CharacterManipulationAndStrings/15.19StringView/CustomStringView.cpp
+new file mode 100644
+index 0000000..e4dc24c
+--- /dev/null
++++ b/15.CharacterManipulationAndStrings/15.19StringView/CustomStringView.cpp
+@@ -0,0 +1,54 @@
++#include<iostream>
++#include<cstring>
++using namespace std;
++
++
++class CustomStringView{
++    //using constreference = const T &;
++    using constpointer = const char *;
++
++public:
++    CustomStringView() = default;
++    CustomStringView(string str){
++        myptr = str.c_str();
++        size = str.length();
++    }
++
++    CustomStringView(const char *str){
++        myptr = str;
++        size = strlen(str);
++    }
++
++    ~CustomStringView(){
++        delete myptr;
++        size = 0;
++    }
++
++    size_t length(){
++        return size;
++    }
++
++    constpointer data(){
++        return myptr;
++    }
++
++
++private:
++    constpointer myptr{nullptr};
++    size_t  size{0};
++};
++
++int main(){
++
++    cout << "Welcome to CustomStringView" << endl;
++    CustomStringView str(string{"Hello World"}); 
++    cout << "Length of string: " << str.length() << endl;
++    cout << "String Holded: " << str.data() << endl;
++
++
++    const char *temp{"How are you"};
++    CustomStringView array(temp);
++    cout << "Length of string: " << array.length() << endl;
++    cout << "String Holded: " << array.data() << endl;
++    return 0;
++}
+\ No newline at end of file
+diff --git a/15.CharacterManipulationAndStrings/15.19StringView/main.cpp b/15.CharacterManipulationAndStrings/15.19StringView/main.cpp
+index 6a33e83..0d11168 100644
+--- a/15.CharacterManipulationAndStrings/15.19StringView/main.cpp
++++ b/15.CharacterManipulationAndStrings/15.19StringView/main.cpp
+@@ -69,7 +69,7 @@ int main(){
+     */
+ 
+    //Changing the view window : SHRINKING
+-   /*
++   
+     const char * c_string1 { "The animals have left the region" };
+     std::string_view sv10{c_string1};
+     
+@@ -87,7 +87,7 @@ int main(){
+     
+     //Changing the view doesn't change the viewed string : 
+     std::cout << "Original sv10 viewed string : " << c_string1 << std::endl;
+-    */
++    
+ 
+ 
+    //String_view shouldn't outlive whatever it is viewing
+@@ -146,6 +146,10 @@ int main(){
+     std::cout << "The back character is : " << sv16.back() << std::endl;
+     std::cout << "Substring : " << sv16.substr(0,22) << std::endl;
+ 
++    const char *ptr = "Hello World";
++    std::cout << ptr << std::endl;
++
++    ptr[1] = 'T';
+ 
+     return 0;
+ }
+\ No newline at end of file
+diff --git a/25.Concepts/C++ 20 Template Project/CppProperties.json b/25.Concepts/C++ 20 Template Project/CppProperties.json
+new file mode 100644
+index 0000000..6017def
+--- /dev/null
++++ b/25.Concepts/C++ 20 Template Project/CppProperties.json	
+@@ -0,0 +1,21 @@
++{
++  "configurations": [
++    {
++      "inheritEnvironments": [
++        "msvc_x64"
++      ],
++      "name": "x64-Release",
++      "includePath": [
++        "${env.INCLUDE}",
++        "${workspaceRoot}\\**"
++      ],
++      "defines": [
++        "WIN32",
++        "NDEBUG",
++        "UNICODE",
++        "_UNICODE"
++      ],
++      "intelliSenseMode": "windows-msvc-x64"
++    }
++  ]
++}
+\ No newline at end of file
+diff --git a/25.Concepts/C++ 20 Template Project/main.cpp b/25.Concepts/C++ 20 Template Project/main.cpp
+index ee5ed43..d5e1baa 100644
+--- a/25.Concepts/C++ 20 Template Project/main.cpp	
++++ b/25.Concepts/C++ 20 Template Project/main.cpp	
+@@ -1,11 +1,18 @@
+ #include <iostream>
++#include <concepts>
++using namespace std;
+ 
+-consteval int get_value(){
+-    return 3;
++template<typename T>
++requires <std::integral T>
++T maximum(T a, T b) {
++    return a > b ? a : b;
+ }
+ 
++
+ int main(){
+-    constexpr int value = get_value();
+-    std::cout << "value : " << value << std::endl;
++    int a{ 10 };
++    int b{ 20 };
++    auto max = maximum(a, b);
++    cout << "Maximum:: " << max << endl;
+     return 0;
+ }
+\ No newline at end of file
+diff --git a/25.Concepts/Concepts/Concepts.cpp b/25.Concepts/Concepts/Concepts.cpp
+new file mode 100644
+index 0000000..4a8cda2
+--- /dev/null
++++ b/25.Concepts/Concepts/Concepts.cpp
+@@ -0,0 +1,41 @@
++#include <iostream>
++#include <concepts>
++using namespace std;
++
++template <typename T>
++T add_up(const T collection[], unsigned int size)
++    requires (std::is_integral_v<T> || std::is_floating_point_v<T>)
++{
++    T sum{};
++    for (unsigned int i{ 0 }; i < size; ++i) {
++        sum += collection[i];
++    }
++    return sum;
++}
++
++template<typename T>
++requires std::integral <T>
++T maximum(T a, T b) {
++    return a > b ? a : b;
++}
++
++
++template<typename T>
++concept isMultipliable = requires(T a, T b){
++    a * b;
++}
++
++int main() {
++    int a{ 10 };
++    int b{ 20 };
++    auto max = maximum(a, b);
++    cout << "Maximum:: " << max << endl;
++
++    float numbers1[]{ 10.2f, 11.8f };
++    double numbers2[]{ 10.9999999999999999, 11.11111111111111111111 };
++    char numbers3[]{ 'a', 'b' };
++    int numbers4[]{ 10, 11 };
++    auto result = add_up(numbers2, (unsigned int)size(numbers2));
++    cout << "Result:: " << result << endl;
++    return 0;
++}
+\ No newline at end of file
+diff --git a/26.Classes/26.12Struct/main.cpp b/26.Classes/26.12Struct/main.cpp
+index 9b7e387..954e4f2 100644
+--- a/26.Classes/26.12Struct/main.cpp
++++ b/26.Classes/26.12Struct/main.cpp
+@@ -9,6 +9,9 @@ struct Cat
+ {
+     public : 
+         std::string m_name;
++    
++    private:
++        std::string m_breed;
+ };
+ 
+ 
+diff --git a/26.Classes/26.2YourFirstClass/main.cpp b/26.Classes/26.2YourFirstClass/main.cpp
+index d948303..c6f0535 100644
+--- a/26.Classes/26.2YourFirstClass/main.cpp
++++ b/26.Classes/26.2YourFirstClass/main.cpp
+@@ -1,4 +1,4 @@
+-#include <iostream>
++/*#include <iostream>
+ 
+ const double PI {3.1415926535897932384626433832795};
+ 
+@@ -31,5 +31,35 @@ int main(){
+ 
+     std::cout << "volume : " << cylinder1.volume() << std::endl;
+    
++    return 0;
++}*/
++
++#include <iostream>
++#include <cmath>
++ 
++class Point{
++    public : 
++    //methods
++    Point() = default;
++    Point(double x, double y){
++        m_x = x; 
++        m_y = y;
++    }
++    double distance_to( Point target){
++        return sqrt(pow(target.m_x - m_x, 2) + pow(target.m_y - m_y, 2) * 1.0);
++    }
++    void print_info(){
++        std::cout << "Point [ x : " << m_x << ", y: " << m_y << "]" << std::endl;
++    }
++    //member variables
++    private : 
++    double m_x{1};
++    double m_y{1};
++};
++ 
++int main()
++{
++    Point p1;
++    p1.print_info();
+     return 0;
+ }
+\ No newline at end of file
+diff --git a/27.ZoomingInOnClassObjects/27.2ConstObjects/main.cpp b/27.ZoomingInOnClassObjects/27.2ConstObjects/main.cpp
+index aca657f..bd443d0 100644
+--- a/27.ZoomingInOnClassObjects/27.2ConstObjects/main.cpp
++++ b/27.ZoomingInOnClassObjects/27.2ConstObjects/main.cpp
+@@ -1,6 +1,9 @@
+ #include <iostream>
+ #include "dog.h"
+ 
++void fun(Dog dog){
++    dog.print_info();
++}
+ 
+ int main(){
+ 
+@@ -16,13 +19,16 @@ int main(){
+     */
+ 
+    //Pointer to non const
+-   //Dog * dog_ptr = &dog1;
++   Dog * dog_ptr = (Dog *)&dog1;
++   dog_ptr->set_name("Milou");
++   dog_ptr->print_info();
+ 
++   fun(dog1);
+    //Non const reference
+    //Dog& dog_ref = dog1;
+ 
+    //Pointer to const
+-   const Dog* const_dog_ptr = &dog1;
++   //const Dog* const_dog_ptr = &dog1;
+    //const_dog_ptr->set_name("Milou"); // Expect
+    //const_dog_ptr->get_name();
+ 
+-- 
+2.35.1.windows.2
+

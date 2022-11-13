@@ -2,6 +2,7 @@
 #include <memory>
 #include "dog.h"
 
+#if 0
 int main(){
 
 
@@ -136,3 +137,4 @@ int main(){
    
     return 0;
 }
+#endif
